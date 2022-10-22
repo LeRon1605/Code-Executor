@@ -1,9 +1,13 @@
 <?php
     class CppCompiler implements ICompiler {
-
         public function execute($code, $input)
         {
             $id = uniqid();
+            $time = '';
+            $memory = 0;
+            $status = ExecutorStatus::Pending;
+
+            $command = '';
             $inputFilePath = "input_".$id.".txt";
             $outputFilePath = "output_".$id.".exe";
             $codeFilePath = "code_".$id.".cpp";
@@ -13,20 +17,32 @@
             fwrite($codeFile, $code);
             fclose($codeFile);
 
-            $inputFile = fopen($inputFilePath, 'w');
-            fwrite($inputFile, $input);
-            fclose($inputFile);
+            if (!empty(trim($input))) {
+                $inputFile = fopen($inputFilePath, 'w');
+                fwrite($inputFile, $input);
+                fclose($inputFile);
+            }
 
             // compile code
             shell_exec("g++ -o $outputFilePath $codeFilePath 2> $errorFilePath");
             $error = file_get_contents($errorFilePath);
             
-            if (strpos($error, 'error')) return $error;
-
-            if (empty(trim($input))) {
-                $output = shell_exec($outputFilePath);
-            } else {
-                $output = shell_exec($outputFilePath." < $inputFilePath");
+            if (strpos($error, 'error')) {
+                $output = $error;
+                $status = ExecutorStatus::CompilerError;
+            }else{
+                if (empty(trim($input))) {
+                    $command = $outputFilePath;
+                } else {
+                    $command = $outputFilePath." < $inputFilePath";
+                }
+                $status = ExecutorStatus::Success;
+                $output = shell_exec($command);
+                // echo $command;
+                // $time = shell_exec("(Measure-Command { \"$command\" | Out-Default }).ToString()");
+                // echo $time;
+                // echo shell_exec("time \"$command\"");
+                // echo "(Measure-Command { \"$command\" | Out-Default }).ToString()";
             }
 
             unlink($inputFilePath);
@@ -34,7 +50,6 @@
             unlink($errorFilePath);
             unlink($codeFilePath);
             
-            return $output;
+            return new ExecutorResult($code, $input, $output, $time, $memory, $status);
         }
     }
-?>
