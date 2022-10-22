@@ -43,10 +43,12 @@
                 // echo $time;
                 // echo shell_exec("time \"$command\"");
                 // echo "(Measure-Command { \"$command\" | Out-Default }).ToString()";
+                unlink($outputFilePath);
             }
 
-            unlink($inputFilePath);
-            unlink($outputFilePath);
+            if (!empty(trim($input))) {
+                unlink($inputFilePath);
+            }
             unlink($errorFilePath);
             unlink($codeFilePath);
             
