@@ -34,15 +34,11 @@
                 if (empty(trim($input))) {
                     $command = $outputFilePath;
                 } else {
-                    $command = $outputFilePath." < $inputFilePath";
+                    $command = "$outputFilePath < $inputFilePath";
                 }
-                $status = ExecutorStatus::Success;
                 $output = shell_exec($command);
-                // echo $command;
-                // $time = shell_exec("(Measure-Command { \"$command\" | Out-Default }).ToString()");
-                // echo $time;
-                // echo shell_exec("time \"$command\"");
-                // echo "(Measure-Command { \"$command\" | Out-Default }).ToString()";
+                $status = $output ? ExecutorStatus::Success : ExecutorStatus::RuntimeError;
+                $time = shell_exec("powershell -command \"(Measure-Command { \"$command\" | Out-Default }).ToString()\"");
                 unlink($outputFilePath);
             }
 

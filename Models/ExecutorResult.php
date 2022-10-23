@@ -54,5 +54,18 @@
         function getStatus() {
             return $this -> status;
         }
+
+        function getStrStatus() {
+            switch ($this -> status) {
+                case ExecutorStatus::Success:
+                    return 'Success';
+                case ExecutorStatus::CompilerError:
+                    return 'Compiler Error';
+                case ExecutorStatus::RuntimeError:
+                    return 'Runtime Error';
+                case ExecutorStatus::Pending:
+                    return 'Pending';
+            }
+        }
     }
 ?>

@@ -43,6 +43,7 @@
             <label class="form-label">Output</label>
             <textarea class="form-control" name="code" rows="7"><?php echo isset($result) ? $result-> getOutput() : ''?></textarea>
             <div class="mt-3">
+                <span>Status: <?php echo isset($result) ? $result-> getStrStatus() : ''?></span><br>
                 <span>Time: <?php echo isset($result) ? $result-> getTime() : ''?></span>
                 <span>Memory: <?php echo isset($result) ? $result-> getMemory() : ''?></span>
             </div>
