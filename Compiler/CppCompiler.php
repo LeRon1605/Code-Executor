@@ -9,7 +9,7 @@
 
             $command = '';
             $inputFilePath = "input_".$id.".txt";
-            $outputFilePath = "output_".$id.".exe";
+            $outputFilePath = "./output_".$id.".exe";
             $codeFilePath = "code_".$id.".cpp";
             $errorFilePath = "error_".$id.".txt";
 
@@ -36,9 +36,11 @@
                 } else {
                     $command = "$outputFilePath < $inputFilePath";
                 }
-                $output = shell_exec($command);
+                
+                $start = microtime(true);
+                $output = shell_exec("wsl timeout 5s $command");
+                $time = round((microtime(true) - $start) * 1000);
                 $status = $output ? ExecutorStatus::Success : ExecutorStatus::RuntimeError;
-                $time = shell_exec("powershell -command \"(Measure-Command { \"$command\" | Out-Default }).ToString()\"");
                 unlink($outputFilePath);
             }
 
