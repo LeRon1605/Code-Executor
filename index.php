@@ -3,10 +3,12 @@
     include('./Models/ExecutorResult.php');
     include('./Models/ExecutorStatus.php');
     include('./Compiler/CppCompiler.php');
-    
+    include('./Compiler/JavaCompiler.php');
+    include('./Compiler/CompilerFactory.php');
+    include('Runner.php');
     if (isset($_POST['code'])) {
-        $compiler = new CppCompiler();
-        $result =  $compiler -> execute($_POST['code'], $_POST['input']);
+        $runner = new Runner(CompilerFactory::getInstance($_POST['lang']));
+        $result =  $runner -> execute($_POST['code'], $_POST['input']);
     }
 ?>
 
@@ -31,7 +33,11 @@
         >
             <div class="m-3 col-12">
                 <label class="form-label">Code</label>
-                <textarea class="form-control" name="code" rows="20"><?php echo isset($result) ? $result-> getCode() : ''?></textarea>
+                <select class="form-select" aria-label="Default select example" name="lang">
+                    <option value="cpp">C++</option>
+                    <option value="java">Java</option>
+                </select>
+                <textarea class="form-control mt-3" name="code" rows="20"><?php echo isset($result) ? $result-> getCode() : ''?></textarea>
             </div>
             <div class="m-3 col-12">
                 <label class="form-label">Input</label>

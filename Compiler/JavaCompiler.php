@@ -1,12 +1,12 @@
 <?php
-    class CppCompiler implements ICompiler {
+    class JavaCompiler implements ICompiler {
         public function compile($code)
         {
-            $codeFile = fopen("main.cpp", 'w');
+            $codeFile = fopen("Main.java", 'w');
             fwrite($codeFile, $code);
             fclose($codeFile);
-            shell_exec("g++ -o main.exe main.cpp 2> error.txt");
-            unlink("main.cpp");
+            shell_exec("wsl javac Main.java 2> error.txt");
+            unlink("Main.java");
             $error = file_get_contents("error.txt");
             unlink("error.txt");
             return $error;
@@ -14,12 +14,13 @@
         public function exec($code, $input)
         {
             if (empty(trim($input))) {
-                $command = "./main.exe";
+                $command = "java Main";
             } else {
-                $command = "./main.exe input.txt";
+                $command = "java Main < input.txt";
             }
-            $output = shell_exec("wsl ./Bash/entrypoint.sh $command; 2>&1");
-            unlink("main.exe");
+            $output = shell_exec("wsl timeout 5s /usr/bin/time -f \"%E\" $command; 2>&1");
+            unlink("Main.class");
             return $output;
         }
     }
+?>

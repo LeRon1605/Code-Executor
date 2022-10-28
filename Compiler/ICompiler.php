@@ -1,5 +1,6 @@
 <?php
     interface ICompiler {
-        public function execute($code, $input);
+        public function compile($code);
+        public function exec($code, $input);
     }
 ?>
